@@ -2,11 +2,11 @@ node_modules# Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+yarn-error.log* 
 pnpm-debug.log*
 
 # Папки сборки и временные файлы
-dist/
+dist/ 
 build/
 .DS_Store
 .env
