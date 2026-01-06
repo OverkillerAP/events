@@ -16,7 +16,21 @@ app.listen(port, () => {
 });
 
 
-const root = path.join(__dirname, 'public');
-app.use(express.static(root));
+// Подключаем статические папки
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware для JSON и форм
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Простой маршрут на главную страницу
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
+
 
 app.listen(3000, () => console.log('Server running on port 3000'));
+
+
+
+//пересмотреть код на повторы
