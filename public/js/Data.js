@@ -5,8 +5,6 @@ const content = document.getElementById('content');
 const data = {
     all: 'Показан весь контент',
     music: 'Показана музыка',
-    video: 'Показано видео',
-    games: 'Показаны игры',
     news: 'Показаны новости',
     tech: 'Показаны технологии',
     sports: 'Показан спорт',

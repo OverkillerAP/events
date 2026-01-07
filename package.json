@@ -1,7 +1,15 @@
 {
-  "name": "node.js",
+  "name": "node",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://github.com/OverkillerAP/events#readme",
+  "bugs": {
+    "url": "https://github.com/OverkillerAP/events/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OverkillerAP/events.git"
+  },
   "license": "ISC",
   "author": "",
   "type": "commonjs",
