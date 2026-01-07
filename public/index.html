@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="/js/Data.js"></script>
     <title>Prakse-Projekts</title>
+    <script src="ejs.js"></script>
+    <script>
+    let people = ['geddy', 'neil', 'alex'];
+    let html = ejs.render('<%= people.join(", "); %>', {people: people});
+    </script>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
