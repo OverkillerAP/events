@@ -1,10 +1,26 @@
 <%- include('partials/header') %>
 
-<main class="flex-grow-1">
-  <div class="container py-5">
-    <h1><%= mainTitle %></h1>
-    <p><%= mainContent %></p>
+<main class="container py-5">
+  <h1 class="mb-4">События</h1>
+
+  <div class="row g-4">
+    <% if (!events || events.length === 0) { %>
+      <p class="text-muted">Событий нет</p>
+    <% } %>
+
+    <% events.forEach(event => { %>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <span class="badge bg-dark mb-2"><%= event.tag %></span>
+            <h5 class="card-title"><%= event.title %></h5>
+            <p class="mb-1">📍 <%= event.location %></p>
+            <p class="mb-0">📅 <%= event.date %></p>
+            <a href="/event/<%= event._id %>" class="btn btn-primary mt-2">Подробнее</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
   </div>
 </main>
-
 <%- include('partials/footer') %>

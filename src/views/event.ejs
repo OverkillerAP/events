@@ -1,7 +1,10 @@
 <%- include('partials/header') %>
 
 <main class="container py-5">
-  <h1>Event ID: <%= eventId %></h1>
+  <h1><%= event.title %></h1>
+  <p class="text-muted">Категория: <%= event.tag %></p>
+  <p>📍 <%= event.location %></p>
+  <p>📅 <%= event.date %></p>
 </main>
 
 <%- include('partials/footer') %>

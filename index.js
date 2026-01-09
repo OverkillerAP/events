@@ -11,29 +11,30 @@ app.use(express.urlencoded({ extended: true }));
 
 // View engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname,'src', 'views'));
 
 // Static
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.use('/', require('./src/routes/home'));
-app.use('/event', require('./src/routes/events'));
-
-// 404
-app.use((req, res) => {
-    res.status(404).send('404 | Page not found');
-});
-
-// MongoDB connection
-const client = new MongoClient('mongodb://localhost:27017/mydatabase');
+// MongoDB
+const client = new MongoClient('mongodb://localhost:27017');
 
 async function startServer() {
   try {
     await client.connect();
     console.log('✅ MongoDB connected');
 
-    // Server
+    app.locals.db = client.db('mydatabase'); // сохраняем экземпляр базы
+
+    // Routes
+    app.use('/', require('./src/routes/home'));
+    app.use('/event', require('./src/routes/events'));
+
+    // 404
+    app.use((req, res) => {
+      res.status(404).send('404 | Page not found');
+    });
+
     app.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);
     });
@@ -44,4 +45,3 @@ async function startServer() {
 }
 
 startServer();
-
