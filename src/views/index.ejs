@@ -12,6 +12,9 @@
       <div class="col-md-4">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
+            <% if (event.image) { %>
+            <img src="<%= event.image %>" alt="<%= event.title %>" class="img-fluid mb-4 mx-auto d-block">
+            <% } %> <br>
             <span class="badge bg-dark mb-2"><%= event.tag %></span>
             <h5 class="card-title"><%= event.title %></h5>
             <p class="mb-1">📍 <%= event.location %></p>

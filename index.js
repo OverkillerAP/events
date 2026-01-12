@@ -19,12 +19,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 // MongoDB
 const client = new MongoClient('mongodb://localhost:27017');
 
+
+
 async function startServer() {
   try {
     await client.connect();
+
+    // DB
+    const db = client.db('mydatabase');
+
+    // DB tags
+    const tags = await db.collection('tags').find({}).toArray();
+
     console.log('✅ MongoDB connected');
 
-    app.locals.db = client.db('mydatabase'); // сохраняем экземпляр базы
+    // save db for routes
+    app.locals.db = db;
 
     // Routes
     app.use('/', require('./src/routes/home'));

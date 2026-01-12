@@ -15,22 +15,19 @@
   <div class="container">
     <a class="navbar-brand" href="/">
       <img src="/images/logo.png" width="40" class="rounded-pill me-2">
-      <%= title %>
+      project
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="/?tag=all">Все</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=music">Музыка</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=theater">Театр</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=sports">Спорт</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=family">Для семьи</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=festival">Фестиваль</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=seminar">Семинар</a></li>
-        <li class="nav-item"><a class="nav-link" href="/?tag=movie">Кино</a></li>
-      </ul>
+        <ul class="navbar-nav me-auto">
+          <% menu.forEach(tag => { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/?tag=<%= tag.id %>"><%= tag.name %></a>
+            </li>
+          <% }) %>
+        </ul>
     </div>
   </div>
 </nav>

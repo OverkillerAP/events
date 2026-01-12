@@ -1,6 +1,10 @@
 <%- include('partials/header') %>
 
 <main class="container py-5">
+
+   <% if (event.image) { %>
+    <img src="<%= event.image %>" alt="<%= event.title %>" class="img-fluid mb-4">
+  <% } %>
   <h1><%= event.title %></h1>
   <p class="text-muted">Категория: <%= event.tag %></p>
   <p>📍 <%= event.location %></p>
