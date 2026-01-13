@@ -1,29 +1,63 @@
 <%- include('partials/header') %>
 
-<main class="container py-5">
-  <h1 class="mb-4">События</h1>
+    <main class="container py-5">
+        <h1 class="mb-4">События</h1>
 
-  <div class="row g-4">
-    <% if (!events || events.length === 0) { %>
-      <p class="text-muted">Событий нет</p>
-    <% } %>
+        
+        <h5>Категория</h5>
+        <% menu.forEach(tag=> { if (tag._id !== 'all') { %>
+            <div class="form-check">
+                <input class="form-check-input filter-checkbox" type="checkbox" value="<%= tag._id %>" <%=selectedTags
+                    && selectedTags.includes(tag._id) ? 'checked' : '' %>
+                >
+                <label class="form-check-label">
+                    <%= tag.name %>
+                </label>
+            </div>
+            <% } }) %>
 
-    <% events.forEach(event => { %>
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <% if (event.image) { %>
-            <img src="<%= event.image %>" alt="<%= event.title %>" class="img-fluid mb-4 mx-auto d-block">
-            <% } %> <br>
-            <span class="badge bg-dark mb-2"><%= event.tag %></span>
-            <h5 class="card-title"><%= event.title %></h5>
-            <p class="mb-1">📍 <%= event.location %></p>
-            <p class="mb-0">📅 <%= event.date %></p>
-            <a href="/event/<%= event._id %>" class="btn btn-primary mt-2">Подробнее</a>
-          </div>
-        </div>
-      </div>
-    <% }) %>
-  </div>
-</main>
-<%- include('partials/footer') %>
+                <hr>
+
+                <input type="date" id="filter-date" class="form-control" value="<%= selectedDate || '' %>">
+
+                <button id="apply-filters" class="btn btn-dark mt-3 w-100">Применить</button>
+
+                <div class="row g-4">
+                    <% if (!events || events.length===0) { %>
+                        <p class="text-muted">Событий нет</p>
+                        <% } %>
+                            <% events.forEach(event=> { %>
+                                <div class="col-md-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-body">
+                                            <% if (event.image) { %>
+                                                <img src="<%= event.image %>" alt="<%= event.title %>"
+                                                    class="img-fluid mb-4 mx-auto d-block">
+                                                <% } %>
+
+                                                    <% if (event.tags && event.tags.length) { %>
+                                                        <% event.tags.forEach(tag=> { %>
+                                                            <span class="badge bg-dark me-1 mb-2">
+                                                                <%= (typeof tag==='object' ) ? (tag.name || tag._id) :
+                                                                    tag %>
+                                                            </span>
+                                                            <% }) %>
+                                                                <% } %>
+
+                                                                    <h5 class="card-title">
+                                                                        <%= event.title %>
+                                                                    </h5>
+                                                                    <p class="mb-1">📍 <%= event.location %>
+                                                                    </p>
+                                                                    <p class="mb-0">📅 <%= event.date %>
+                                                                    </p>
+                                                                    <a href="/event/<%= event._id %>"
+                                                                        class="btn btn-primary mt-2">Подробнее</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                </div>
+    </main>
+    <%- include('partials/footer') %>
+    

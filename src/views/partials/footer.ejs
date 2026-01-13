@@ -1,3 +1,25 @@
+<script>
+    document.getElementById('apply-filters').addEventListener('click', () => {
+        const tags = [];
+        document.querySelectorAll('.filter-checkbox:checked').forEach(cb => {
+            tags.push(cb.value);
+        });
+
+        const date = document.getElementById('filter-date').value;
+
+        const params = new URLSearchParams();
+
+        tags.forEach(tag => params.append('tags', tag));
+        if (date) params.append('date', date);
+
+        window.location.href = '/?' + params.toString();
+    });
+</script>
+
+
+
+
+
 <footer class="bg-dark text-white text-center py-3 mt-auto">
     <div class="container">
         <small>© <%= year %> MySite</small>
@@ -6,4 +28,5 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
