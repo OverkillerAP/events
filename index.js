@@ -5,9 +5,15 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = 3000;
 
+const aboutRoutes = require('./src/routes/about');
+app.use('/', aboutRoutes);
+app.use('/', require('./routes/search'));
+
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 // View engine
 app.set('view engine', 'ejs');

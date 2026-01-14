@@ -9,9 +9,11 @@
     </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <% locals?.scripts?.forEach((script) => { %>
-    <script src="/js/<%= script %>"></script>
-    <% }); %>
+    <% locals?.scripts?.forEach((script)=> { %>
+        <script src="/js/<%= script %>"></script>
+        <script src="/js/search.js"></script>
+
+        <% }); %>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -33,10 +35,10 @@
                                 <%= tag.name %>
                             </a>
                         </li>
-                    <% }) %>
+                        <% }) %>
                 </ul>
-                <button type="button">About</button>
-                <input type="search" id="site-search" name="q">
+                <a href="/about" class="btn btn-secondary">О нас</a>
+                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Поиск по названию...">
             </div>
         </div>
     </nav>
