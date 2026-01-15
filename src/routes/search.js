@@ -1,27 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // подключение к Mongo
+const { MongoClient } = require('mongodb');
+
+const uri = 'mongodb://127.0.0.1:27017';
+const client = new MongoClient(uri);
 
 router.get('/search', async (req, res) => {
-  const q = req.query.q?.trim();
+    try {
+        const q = req.query.q || '';
+        const db = req.app.locals.db;
 
-  if (!q) {
-    return res.json([]);
-  }
+        const events = await db.collection('events')
+            .find({ title: { $regex: q, $options: 'i' } })
+            .toArray();
 
-  try {
-    const events = await db
-      .collection('events')
-      .find({
-        title: { $regex: q, $options: 'i' } // 🔍 поиск по title
-      })
-      .toArray();
+        const menu = await db.collection('tags').find().sort({ name: 1 }).toArray();
+        menu.unshift({ _id: 'all', name: 'Все' });
 
-    res.json(events);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json([]);
-  }
+        res.render('events', {
+            title: 'Результаты поиска',
+            events,
+            menu
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
 });
 
 module.exports = router;

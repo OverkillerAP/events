@@ -1,0 +1,26 @@
+<%- include('partials/header') %>
+
+<main class="container py-5">
+    <h1><%= title %></h1>
+
+    <div class="row">
+        <% events.forEach(event => { %>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <% if (event.image) { %>
+                        <img src="<%= event.image %>" class="card-img-top">
+                    <% } %>
+                    <div class="card-body">
+                        <h5><%= event.title %></h5>
+                        <p>📍 <%= event.location %></p>
+                        <a href="/event/<%= event._id %>" class="btn btn-primary btn-sm">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</main>
+
+<%- include('partials/footer') %>

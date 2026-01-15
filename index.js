@@ -1,13 +1,18 @@
 const express = require('express');
 const path = require('path');
 const { MongoClient } = require('mongodb');
-
 const app = express();
 const port = 3000;
 
 const aboutRoutes = require('./src/routes/about');
+const searchRoutes = require('./src/routes/search');
+app.use((req, res, next) => {
+    res.locals.year = new Date().getFullYear();
+    next();
+});
+
 app.use('/', aboutRoutes);
-app.use('/', require('./routes/search'));
+app.use('/', searchRoutes);
 
 
 // Middleware

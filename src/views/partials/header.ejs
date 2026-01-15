@@ -38,7 +38,14 @@
                         <% }) %>
                 </ul>
                 <a href="/about" class="btn btn-secondary">О нас</a>
-                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Поиск по названию...">
+                <form action="/search" method="get" class="d-flex justify-content-center mb-3 gap-2">
+                    <input type="text" name="q" id="searchInput" class="form-control form-control-sm"
+                        style="max-width: 220px;" placeholder="Поиск по названию...">
+
+                    <button type="submit" class="btn btn-sm btn-dark">
+                        🔍
+                    </button>
+                </form>
             </div>
         </div>
     </nav>
