@@ -4,6 +4,8 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = 3000;
 
+
+
 const aboutRoutes = require('./src/routes/about');
 const searchRoutes = require('./src/routes/search');
 app.use((req, res, next) => {
@@ -13,6 +15,27 @@ app.use((req, res, next) => {
 
 app.use('/', aboutRoutes);
 app.use('/', searchRoutes);
+
+app.get('/events', async (req, res) => {
+  const date = req.query.date;
+
+  const events = await req.app.locals.db
+    .collection('events')
+    .find({ date })
+    .toArray();
+
+  res.render('events', { events, date });
+});
+
+app.get('/api/event-dates', async (req, res) => {
+  const events = await req.app.locals.db
+    .collection('events')
+    .find({})
+    .project({ date: 1 })
+    .toArray();
+
+  res.json(events.map(e => e.date));
+});
 
 
 // Middleware

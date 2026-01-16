@@ -16,6 +16,8 @@
             </div>
             <% } }) %>
 
+            <div id="calendar"></div>
+
                 <hr>
 
                 <input type="date" id="filter-date" class="form-control" value="<%= selectedDate || '' %>">
@@ -59,5 +61,47 @@
                                 <% }) %>
                 </div>
     </main>
+
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const calendar = new VanillaCalendar('#calendar', {
+      settings: {
+        lang: 'ru',
+        selection: {
+          day: 'single' // выбор одного дня
+        }
+      },
+
+      actions: {
+        clickDay(event, self) {
+          const date = event.target.dataset.calendarDay;
+          console.log('Выбрана дата:', date);
+
+          // пример перехода
+          window.location.href = `/events?date=${date}`;
+        }
+      }
+    });
+
+    calendar.init();
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const res = await fetch('/api/event-dates');
+    const dates = await res.json();
+
+    const calendar = new VanillaCalendar('#calendar', {
+      settings: {
+        selected: {
+          dates
+        }
+      }
+    });
+
+    calendar.init();
+  });
+</script>
     <%- include('partials/footer') %>
     

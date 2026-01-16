@@ -1,16 +1,6 @@
 const links = document.querySelectorAll('.nav-link');
 const content = document.getElementById('content');
 
-// Содержимое для каждой категории
-const data = {
-    all: 'Показан весь контент',
-    music: 'Показана музыка',
-    news: 'Показаны новости',
-    tech: 'Показаны технологии',
-    sports: 'Показан спорт',
-    movies: 'Показаны фильмы',
-    education: 'Показано образование'
-};
 
 links.forEach(link => {
     link.addEventListener('click', function (e) {

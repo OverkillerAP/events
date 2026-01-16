@@ -1,2 +1,87 @@
 
- 
+ body {
+  background: #f5f6fa;
+  font-family: Arial, sans-serif;
+}
+
+.filters {
+  width: 320px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.map-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 999px;
+  border: 2px solid #000;
+  background: white;
+  font-size: 15px;
+  margin: 12px 0;
+  cursor: pointer;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 14px 0;
+}
+
+/* Calendar */
+.calendar {
+  text-align: center;
+}
+
+.month {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  font-size: 12px;
+}
+
+.weekdays div {
+  color: #999;
+}
+
+.days div {
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.today {
+  background: #000;
+  color: #fff;
+  border-radius: 50%;
+}
+
+/* Categories */
+.category {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  margin: 8px 0;
+}
+
+.category input {
+  width: 18px;
+  height: 18px;
+}
