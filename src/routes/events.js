@@ -3,38 +3,35 @@ const { ObjectId } = require('mongodb');
 const router = express.Router();
 
 router.get('/:eventId', async (req, res) => {
-    try {
-        const db = req.app.locals.db;
+  try {
+    const db = req.app.locals.db;
 
-        // Находим событие
-        const event = await db.collection('events').findOne({ _id: new ObjectId(req.params.eventId) });
+    const event = await db
+      .collection('events')
+      .findOne({ _id: new ObjectId(req.params.eventId) });
 
-        if (!event) {
-            return res.status(404).send('Событие не найдено');
-        }
-
-
-        // Получаем все теги для меню
-        const tags = await db.collection('tags').find().sort({ name: 1 }).toArray();
-        tags.unshift({ _id: 'all', name: 'Все' });
-
-        // Рендерим страницу
-        res.render('event', {
-            title: event.title,
-            logo: '/images/logo.png',
-            menu: tags,       // передаём menu в header
-            event,            // правильно передаём событие
-            selectedTags: [],
-            selectedDate: '',
-            year: new Date().getFullYear()
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
+    if (!event) {
+      return res.status(404).render('404', {
+        title: 'Событие не найдено',
+        menu: [],
+        scripts: [] // ✅ ОБЯЗАТЕЛЬНО
+      });
     }
+
+    res.render('event', {
+      title: event.title,
+      event,
+      menu: await db.collection('tags').find().toArray(),
+      scripts: [] // ✅ ОБЯЗАТЕЛЬНО
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
 });
 
 module.exports = router;
+
 
 

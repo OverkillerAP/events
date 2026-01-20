@@ -1,94 +1,111 @@
 const express = require('express');
 const path = require('path');
 const { MongoClient } = require('mongodb');
+
 const app = express();
 const port = 3000;
 
-
-
-const aboutRoutes = require('./src/routes/about');
-const searchRoutes = require('./src/routes/search');
-app.use((req, res, next) => {
-    res.locals.year = new Date().getFullYear();
-    next();
-});
-
-app.use('/', aboutRoutes);
-app.use('/', searchRoutes);
-
-app.get('/events', async (req, res) => {
-  const date = req.query.date;
-
-  const events = await req.app.locals.db
-    .collection('events')
-    .find({ date })
-    .toArray();
-
-  res.render('events', { events, date });
-});
-
-app.get('/api/event-dates', async (req, res) => {
-  const events = await req.app.locals.db
-    .collection('events')
-    .find({})
-    .project({ date: 1 })
-    .toArray();
-
-  res.json(events.map(e => e.date));
-});
-
-
+// --------------------
 // Middleware
+// --------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+// --------------------
 // View engine
+// --------------------
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src', 'views'));
 
+// --------------------
 // Static
+// --------------------
 app.use(express.static(path.join(process.cwd(), 'public')));
 
+// --------------------
 // MongoDB
+// --------------------
 const client = new MongoClient('mongodb://localhost:27017');
 
-
-
 async function startServer() {
-    try {
-        await client.connect();
+  try {
+    await client.connect();
+    const db = client.db('mydatabase');
+    app.locals.db = db;
 
-        // DB
-        const db = client.db('mydatabase');
+    console.log('✅ MongoDB connected');
 
-        // DB tags
-        const tags = await db.collection('tags').find({}).toArray();
+    // --------------------
+    // Глобальные данные для EJS
+    // --------------------
+    app.use(async (req, res, next) => {
+      try {
+        res.locals.menu = await db
+          .collection('tags')
+          .find({})
+          .toArray();
+      } catch {
+        res.locals.menu = [];
+      }
 
-        console.log('✅ MongoDB connected');
+      res.locals.title = 'Events App';
+      res.locals.year = new Date().getFullYear();
+      next();
+    });
 
-        // save db for routes
-        app.locals.db = db;
+    // --------------------
+    // Routes
+    // --------------------
+    app.use('/', require('./src/routes/home'));
+    app.use('/', require('./src/routes/about'));
+    app.use('/', require('./src/routes/search'));
+    app.use('/event', require('./src/routes/events'));
 
-        // Routes
-        app.use('/', require('./src/routes/home'));
-        app.use('/event', require('./src/routes/events'));
+    // --------------------
+    // Events by date
+    // --------------------
+    app.get('/events', async (req, res) => {
+      const date = req.query.date;
 
-        // 404
-        app.use((req, res) => {
-            res.status(404).send('404 | Page not found');
-        });
+      const events = await db
+        .collection('events')
+        .find({ date })
+        .toArray();
 
-        app.listen(port, () => {
-            console.log(`Server running on http://localhost:${port}`);
-        });
+      res.render('events', {
+        title: `События на ${date}`,
+        events,
+        date
+      });
+    });
 
-    } catch (err) {
-        console.error('❌ MongoDB connection error:', err);
-    }
+    // --------------------
+    // API for calendar
+    // --------------------
+    app.get('/api/event-dates', async (req, res) => {
+      const events = await db
+        .collection('events')
+        .find({})
+        .project({ date: 1 })
+        .toArray();
+
+      res.json(events.map(e => e.date));
+    });
+
+    // --------------------
+    // 404
+    // --------------------
+    app.use((req, res) => {
+      res.status(404).send('404 | Page not found');
+    });
+
+    app.listen(port, () => {
+      console.log(`🚀 http://localhost:${port}`);
+    });
+
+  } catch (err) {
+    console.error('❌ MongoDB error:', err);
+  }
 }
-
-
-
 
 startServer();

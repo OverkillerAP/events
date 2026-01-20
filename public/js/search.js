@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
   });
 
+
+  
   function render(events) {
     container.innerHTML = '';
 
