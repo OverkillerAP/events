@@ -3,7 +3,7 @@
     <main class="container py-5">
         <h1 class="mb-4">События</h1>
 
-        
+
         <h5>Категория</h5>
         <% menu.forEach(tag=> { if (tag._id !== 'all') { %>
             <div class="form-check">
@@ -16,11 +16,11 @@
             </div>
             <% } }) %>
 
-            <div id="calendar"></div>
+                <div id="calendar"></div>
 
                 <hr>
 
-                <input type="date" id="filter-date" class="form-control" value="<%= selectedDate || '' %>">
+
 
                 <button id="apply-filters" class="btn btn-dark mt-3 w-100">Применить</button>
 
@@ -63,45 +63,44 @@
     </main>
 
     <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const calendar = new VanillaCalendar('#calendar', {
-      settings: {
-        lang: 'ru',
-        selection: {
-          day: 'single' // выбор одного дня
-        }
-      },
+        document.addEventListener('DOMContentLoaded', () => {
+            const calendar = new VanillaCalendar('#calendar', {
+                settings: {
+                    lang: 'ru',
+                    selection: {
+                        day: 'single' // выбор одного дня
+                    }
+                },
 
-      actions: {
-        clickDay(event, self) {
-          const date = event.target.dataset.calendarDay;
-          console.log('Выбрана дата:', date);
+                actions: {
+                    clickDay(event, self) {
+                        const date = event.target.dataset.calendarDay;
+                        console.log('Выбрана дата:', date);
 
-          // пример перехода
-          window.location.href = `/events?date=${date}`;
-        }
-      }
-    });
+                        // пример перехода
+                        window.location.href = `/events?date=${date}`;
+                    }
+                }
+            });
 
-    calendar.init();
-  });
-</script>
+            calendar.init();
+        });
+    </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    const res = await fetch('/api/event-dates');
-    const dates = await res.json();
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const res = await fetch('/api/event-dates');
+            const dates = await res.json();
 
-    const calendar = new VanillaCalendar('#calendar', {
-      settings: {
-        selected: {
-          dates
-        }
-      }
-    });
+            const calendar = new VanillaCalendar('#calendar', {
+                settings: {
+                    selected: {
+                        dates
+                    }
+                }
+            });
 
-    calendar.init();
-  });
-</script>
+            calendar.init();
+        });
+    </script>
     <%- include('partials/footer') %>
-    

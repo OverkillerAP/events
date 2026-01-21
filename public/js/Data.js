@@ -27,7 +27,7 @@ const categories = [...menuItems].map(item => {
     };
 });
 
-// 🔍 Поиск по data-category и тексту
+//  Поиск по data-category и тексту
 searchInput.addEventListener("input", () => {
     const value = searchInput.value.toLowerCase();
     autocomplete.innerHTML = "";

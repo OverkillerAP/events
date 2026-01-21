@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  
+
   function render(events) {
     container.innerHTML = '';
 
