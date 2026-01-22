@@ -5,13 +5,16 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = 3000;
 
+console.log('1️⃣ Запуск приложения...');
+
 // --------------------
 // Middleware
 // --------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-    res.locals.scripts = []; // будет доступно во всех EJS
+    res.locals.scripts = []; 
+    console.log(`2️⃣ Middleware: res.locals.scripts инициализирован`);
     next();
 });
 
@@ -20,14 +23,16 @@ app.use((req, res, next) => {
 // --------------------
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src', 'views'));
+console.log('3️⃣ View engine настроен на EJS');
 
 // --------------------
 // Static
 // --------------------
 app.use(express.static(path.join(process.cwd(), 'public')));
+console.log('4️⃣ Статические файлы из public/ подключены');
 
 // --------------------
-// MongoDB (ЛОКАЛЬНАЯ, через Compass)
+// MongoDB (локальная)
 // --------------------
 const client = new MongoClient('mongodb://localhost:27017');
 
@@ -36,10 +41,10 @@ const client = new MongoClient('mongodb://localhost:27017');
 // --------------------
 async function startServer() {
     try {
+        console.log('5️⃣ Подключение к MongoDB...');
         await client.connect();
         const db = client.db('mydatabase');
         app.locals.db = db;
-
         console.log('✅ MongoDB connected (local)');
 
         // --------------------
@@ -47,13 +52,15 @@ async function startServer() {
         // --------------------
         app.use(async (req, res, next) => {
             try {
+                console.log('6️⃣ Загрузка меню из базы...');
                 res.locals.menu = await db
                     .collection('tags')
                     .find({})
                     .sort({ name: 1 })
                     .toArray();
+                console.log(`✅ Меню загружено: ${res.locals.menu.length} элементов`);
             } catch (err) {
-                console.error('Menu load error:', err);
+                console.error('❌ Menu load error:', err);
                 res.locals.menu = [];
             }
 
@@ -62,6 +69,7 @@ async function startServer() {
 
             // 🔹 глобально подключаем Search.js
             res.locals.scripts.push('Search.js');
+            console.log('7️⃣ Search.js добавлен в scripts');
 
             next();
         });
@@ -69,17 +77,29 @@ async function startServer() {
         // --------------------
         // Routes
         // --------------------
+        console.log('8️⃣ Подключение маршрутов...');
+
         app.use('/', require('./src/routes/home'));
+        console.log('→ Home route подключен');
+
         app.use('/', require('./src/routes/about'));
-        app.use('/', require('./src/routes/search')); // ← $text живёт тут
+        console.log('→ About route подключен');
+
+        app.use('/', require('./src/routes/search'));
+        console.log('→ Search route подключен');
+
         app.use('/', require('./src/routes/events'));
+        console.log('→ Events route подключен');
+
+        app.use('/', require('./src/routes/addevent'));
+        console.log('→ Add-event route подключен');
 
         // --------------------
-        // Events by date
+        // Events by date (GET /events?date=YYYY-MM-DD)
         // --------------------
         app.get('/events', async (req, res) => {
             const date = req.query.date;
-
+            console.log(`9️⃣ GET /events с date=${date}`);
             const events = await db
                 .collection('events')
                 .find({ date })
@@ -96,6 +116,7 @@ async function startServer() {
         // API for calendar
         // --------------------
         app.get('/api/event-dates', async (req, res) => {
+            console.log('🔟 GET /api/event-dates');
             const events = await db
                 .collection('events')
                 .find({})
@@ -109,6 +130,7 @@ async function startServer() {
         // 404
         // --------------------
         app.use((req, res) => {
+            console.log(`⚠️ 404 Not Found: ${req.originalUrl}`);
             res.status(404).send('404 | Page not found');
         });
 
@@ -116,7 +138,7 @@ async function startServer() {
         // Listen
         // --------------------
         app.listen(port, () => {
-            console.log(`🚀 http://localhost:${port}`);
+            console.log(`🚀 Server running at http://localhost:${port}`);
         });
 
     } catch (err) {
