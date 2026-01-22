@@ -3,16 +3,18 @@
 <div class="container py-5">
   <h1>Добавить событие</h1>
 
-  <form id="addEventForm" class="mt-4">
-    <input type="text" name="title" placeholder="Название" class="form-control mb-3" required>
-    <input type="date" name="date" class="form-control mb-3" required>
-    <input type="text" name="city" placeholder="Город" class="form-control mb-3" required>
-    <button type="submit" class="btn btn-primary">Добавить событие</button>
-  </form>
+  <form id="addEventForm"  class="mt-4">
+  <input type="text" name="title" placeholder="Название" class="form-control mb-3" required>
+  <input type="text" name="tag" placeholder="Тег" class="form-control mb-3" required>
+  <input type="text" name="image" placeholder="Путь к изображению" class="form-control mb-3" required>
+  <input type="date" name="date" class="form-control mb-3" required>
+  <input type="text" name="location" placeholder="Место проведения" class="form-control mb-3" required>
+  <button type="submit" class="btn btn-primary">Добавить событие</button>
+</form>
 
   <p id="status" class="mt-3"></p>
 </div>
 
-<script src="/js/adding.js"></script>
+
 
 <%- include('partials/footer') %>
