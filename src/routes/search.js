@@ -1,31 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const { MongoClient } = require('mongodb');
 
-const uri = 'mongodb://127.0.0.1:27017';
-const client = new MongoClient(uri);
 
+router.get('/api/search', async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    if (!q) return res.json([]);
+
+    const db = req.app.locals.db;
+
+    const events = await db.collection('events')
+      .find({ $text: { $search: q } })
+      .project({ title: 1, date: 1, location: 1, image: 1 })
+      .limit(20)
+      .toArray();
+
+    res.json(events);
+  } catch (err) {
+    console.error('Search API error:', err);
+    res.status(500).json([]);
+  }
+});
+
+/**
+ * Обычный поиск (HTML, Enter / кнопка)
+ */
 router.get('/search', async (req, res) => {
-    try {
-        const q = req.query.q || '';
-        const db = req.app.locals.db;
+  try {
+    const q = (req.query.q || '').trim();
+    const db = req.app.locals.db;
 
-        const events = await db.collection('events')
-            .find({ title: { $regex: q, $options: 'i' } })
-            .toArray();
+    const events = await db.collection('events')
+      .find(q ? { $text: { $search: q } } : {})
+      .toArray();
 
-        const menu = await db.collection('tags').find().sort({ name: 1 }).toArray();
-        menu.unshift({ _id: 'all', name: 'Все' });
-
-        res.render('events', {
-            title: 'Результаты поиска',
-            events,
-            menu
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server error');
-    }
+    res.render('events', {
+      title: 'Результаты поиска',
+      events
+    });
+  } catch (err) {
+    console.error('Search page error:', err);
+    res.status(500).send('Server error');
+  }
 });
 
 module.exports = router;

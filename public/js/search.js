@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let timeout;
 
-  if (!input || !container) return; // защита на случай, если элементов нет
+  if (!input || !container) return;
 
   input.addEventListener('input', () => {
     clearTimeout(timeout);
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const res = await fetch(`/search?q=${encodeURIComponent(q)}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
         const events = await res.json();
         render(events);
       } catch (err) {
@@ -27,8 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 300);
   });
-
-
 
   function render(events) {
     container.innerHTML = '';
@@ -42,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       container.innerHTML += `
         <div class="col-md-4">
           <div class="card mb-3">
-            <img src="${e.image}" class="card-img-top">
+            <img src="${e.image}" class="card-img-top" alt="">
             <div class="card-body">
               <h5>${e.title}</h5>
               <p>${e.location}</p>

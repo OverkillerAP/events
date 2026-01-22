@@ -27,17 +27,20 @@ app.set('views', path.join(__dirname, 'src', 'views'));
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // --------------------
-// MongoDB
+// MongoDB (ЛОКАЛЬНАЯ, через Compass)
 // --------------------
 const client = new MongoClient('mongodb://localhost:27017');
 
+// --------------------
+// Start server
+// --------------------
 async function startServer() {
     try {
         await client.connect();
         const db = client.db('mydatabase');
         app.locals.db = db;
 
-        console.log('✅ MongoDB connected');
+        console.log('✅ MongoDB connected (local)');
 
         // --------------------
         // Глобальные данные для EJS
@@ -47,13 +50,19 @@ async function startServer() {
                 res.locals.menu = await db
                     .collection('tags')
                     .find({})
+                    .sort({ name: 1 })
                     .toArray();
-            } catch {
+            } catch (err) {
+                console.error('Menu load error:', err);
                 res.locals.menu = [];
             }
 
             res.locals.title = 'Events App';
             res.locals.year = new Date().getFullYear();
+
+            // 🔹 глобально подключаем Search.js
+            res.locals.scripts.push('Search.js');
+
             next();
         });
 
@@ -62,7 +71,7 @@ async function startServer() {
         // --------------------
         app.use('/', require('./src/routes/home'));
         app.use('/', require('./src/routes/about'));
-        app.use('/', require('./src/routes/search'));
+        app.use('/', require('./src/routes/search')); // ← $text живёт тут
         app.use('/', require('./src/routes/events'));
 
         // --------------------
@@ -103,12 +112,16 @@ async function startServer() {
             res.status(404).send('404 | Page not found');
         });
 
+        // --------------------
+        // Listen
+        // --------------------
         app.listen(port, () => {
             console.log(`🚀 http://localhost:${port}`);
         });
 
     } catch (err) {
         console.error('❌ MongoDB error:', err);
+        process.exit(1);
     }
 }
 
