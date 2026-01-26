@@ -2,9 +2,18 @@ const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
 
-router.get('/:eventId', async (req, res) => {
+router.get('/event/:eventId', async (req, res) => {
     try {
         const db = req.app.locals.db;
+
+        // защита от кривого id
+        if (!ObjectId.isValid(req.params.eventId)) {
+            return res.status(404).render('404', {
+                title: 'Событие не найдено',
+                menu: [],
+                scripts: []
+            });
+        }
 
         const event = await db
             .collection('events')
@@ -14,15 +23,24 @@ router.get('/:eventId', async (req, res) => {
             return res.status(404).render('404', {
                 title: 'Событие не найдено',
                 menu: [],
-                scripts: [] // ✅ ОБЯЗАТЕЛЬНО
+                scripts: []
             });
+        }
+
+        // 👉 ПОДГРУЖАЕМ ТЕГИ
+        if (Array.isArray(event.tags) && event.tags.length > 0) {
+            event.tags = await db.collection('tags').find({
+                _id: { $in: event.tags.map(id => new ObjectId(id)) }
+            }).toArray();
+        } else {
+            event.tags = [];
         }
 
         res.render('event', {
             title: event.title,
             event,
             menu: await db.collection('tags').find().toArray(),
-            scripts: [] // ✅ ОБЯЗАТЕЛЬНО
+            scripts: []
         });
 
     } catch (err) {
@@ -32,6 +50,3 @@ router.get('/:eventId', async (req, res) => {
 });
 
 module.exports = router;
-
-
-

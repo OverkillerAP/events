@@ -1,106 +1,114 @@
 <%- include('partials/header') %>
 
-    <main class="container py-5">
-        <h1 class="mb-4">События</h1>
+<main class="container py-5">
+    <h1 class="mb-4" id="events-title">События</h1>
 
+    <div class="row">
+        <!-- ЛЕВАЯ КОЛОНКА: фильтры -->
+        <aside class="col-lg-3 col-md-4 mb-4">
+            <h5>Категория</h5>
 
-        <h5>Категория</h5>
-        <% menu.forEach(tag=> { if (tag._id !== 'all') { %>
-            <div class="form-check">
-                <input class="form-check-input filter-checkbox" type="checkbox" value="<%= tag._id %>" <%=selectedTags
-                    && selectedTags.includes(tag._id) ? 'checked' : '' %>
-                >
-                <label class="form-check-label">
-                    <%= tag.name %>
-                </label>
-            </div>
-            <% } }) %>
-
-                <div id="calendar"></div>
-
-                <hr>
-
-
-
-                <button id="apply-filters" class="btn btn-dark mt-3 w-100">Применить</button>
-
-                <div class="row g-4" id="events">
-                    <% if (!events || events.length===0) { %>
-                        <p class="text-muted">Событий нет</p>
-                        <% } %>
-                            <% events.forEach(event=> { %>
-                                <div class="col-md-4">
-                                    <div class="card h-100 shadow-sm">
-                                        <div class="card-body">
-                                            <% if (event.image) { %>
-                                                <img src="<%= event.image %>" alt="<%= event.title %>"
-                                                    class="img-fluid mb-4 mx-auto d-block">
-                                                <% } %>
-
-                                                    <% if (event.tags && event.tags.length) { %>
-                                                        <% event.tags.forEach(tag=> { %>
-                                                            <span class="badge bg-dark me-1 mb-2">
-                                                                <%= (typeof tag==='object' ) ? (tag.name || tag._id) :
-                                                                    tag %>
-                                                            </span>
-                                                            <% }) %>
-                                                                <% } %>
-
-                                                                    <h5 class="card-title">
-                                                                        <%= event.title %>
-                                                                    </h5>
-                                                                    <p class="mb-1">📍 <%= event.location %>
-                                                                    </p>
-                                                                    <p class="mb-0">📅 <%= event.date %>
-                                                                    </p>
-                                                                    <a href="/events/<%= event._id %>"
-                                                                        class="btn btn-primary mt-2">Подробнее</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <% }) %>
+            <% menu.forEach(tag => { %>
+                <div class="form-check">
+                    <input
+                        class="form-check-input filter-checkbox"
+                        type="checkbox"
+                        value="<%= tag._id %>"
+                    >
+                    <label class="form-check-label"><%= tag.name %></label>
                 </div>
-    </main>
+            <% }) %>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const calendar = new VanillaCalendar('#calendar', {
-                settings: {
-                    lang: 'ru',
-                    selection: {
-                        day: 'single' // выбор одного дня
-                    }
-                },
+            <div class="mt-4" id="calendar"></div>
+        </aside>
 
-                actions: {
-                    clickDay(event, self) {
-                        const date = event.target.dataset.calendarDay;
-                        console.log('Выбрана дата:', date);
+        <!-- ПРАВАЯ КОЛОНКА: события -->
+        <section class="col-lg-9 col-md-8">
+            <div class="row g-4" id="events">
+                <% if (!events || events.length === 0) { %>
+                    <p class="text-muted">Событий нет</p>
+                <% } %>
 
-                        // пример перехода
-                        window.location.href = `/events?date=${date}`;
-                    }
-                }
-            });
+                <% events.forEach(event => { %>
+                    <div class="col-md-4 event-item"
+                         data-tag="<%= event.tag %>"
+                         data-date="<%= event.date || '' %>">
 
-            calendar.init();
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <% if (event.image) { %>
+                                    <img src="<%= event.image %>" alt="<%= event.title %>" class="img-fluid mb-3">
+                                <% } %>
+
+                                <span class="badge bg-dark mb-2"><%= event.tag %></span>
+
+                                <h5 class="card-title"><%= event.title %></h5>
+                                <p>📍 <%= event.location %></p>
+                                <p>📅 <%= event.date || '' %></p>
+
+                                <a href="/event/<%= event._id %>" class="btn btn-primary btn-sm">
+                                    Подробнее
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const checkboxes = document.querySelectorAll('.filter-checkbox');
+    const events = document.querySelectorAll('.event-item');
+    const title = document.getElementById('events-title');
+    let selectedDate = null;
+
+    function filterEvents() {
+        const selectedTags = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        let visibleCount = 0;
+
+        events.forEach(ev => {
+            const evTag = ev.dataset.tag;
+            const evDate = ev.dataset.date;
+
+            const tagMatch = selectedTags.length === 0 || selectedTags.includes(evTag);
+            const dateMatch = !selectedDate || evDate === selectedDate;
+
+            if (tagMatch && dateMatch) {
+                ev.style.display = '';
+                visibleCount++;
+            } else {
+                ev.style.display = 'none';
+            }
         });
-    </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const res = await fetch('/api/event-dates');
-            const dates = await res.json();
+        title.textContent = selectedDate
+            ? `События на ${selectedDate}`
+            : 'События';
 
-            const calendar = new VanillaCalendar('#calendar', {
-                settings: {
-                    selected: {
-                        dates
-                    }
-                }
-            });
+        if (visibleCount === 0) title.textContent += ' — событий нет';
+    }
 
-            calendar.init();
-        });
-    </script>
-    <%- include('partials/footer') %>
+    // Фильтр по чекбоксам
+    checkboxes.forEach(cb => cb.addEventListener('change', filterEvents));
+
+    // Календарь VanillaCalendar
+    const calendar = new VanillaCalendar('#calendar', {
+        settings: { lang: 'ru', selection: { day: 'single' } },
+        actions: {
+            clickDay(e) {
+                selectedDate = e.target.dataset.calendarDay;
+                filterEvents();
+            }
+        }
+    });
+    calendar.init();
+});
+</script>
+
+<%- include('partials/footer') %>
