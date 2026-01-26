@@ -27,7 +27,7 @@ app.set('views', path.join(__dirname, 'src', 'views'));
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // --------------------
-// MongoDB (локальная)
+// MongoDB
 // --------------------
 const client = new MongoClient('mongodb://localhost:27017');
 

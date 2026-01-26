@@ -1,20 +1,31 @@
 <%- include('partials/header') %>
 
-<div class="container py-5">
-  <h1>Добавить событие</h1>
+    <div class="container py-5">
+        <h1>Добавить событие</h1>
 
-  <form id="addEventForm"  class="mt-4">
-  <input type="text" name="title" placeholder="Название" class="form-control mb-3" required>
-  <input type="text" name="tag" placeholder="Тег" class="form-control mb-3" required>
-  <input type="text" name="image" placeholder="Путь к изображению" class="form-control mb-3" required>
-  <input type="date" name="date" class="form-control mb-3" required>
-  <input type="text" name="location" placeholder="Место проведения" class="form-control mb-3" required>
-  <button type="submit" class="btn btn-primary">Добавить событие</button>
-</form>
+        <form action="/add-event" method="POST" enctype="multipart/form-data" class="mt-4">
 
-  <p id="status" class="mt-3"></p>
-</div>
+            <input type="text" name="title" class="form-control mb-3" placeholder="Название" required>
+            <select name="tag" required>
+                <option value="">Выберите тег</option>
+                <% tags.forEach(tag=> { %>
+                    <option value="<%= tag._id %>">
+                        <%= tag.name %>
+                    </option>
+                    <% }) %>
+            </select>
+            <input type="file" name="image" class="form-control mb-3" accept="image/*" required>
+            <input type="date" name="date" class="form-control mb-3" required>
+            <input type="text" name="location" class="form-control mb-3" placeholder="Место проведения" required>
+            <button type="submit" class="btn btn-primary">Добавить событие</button>
+        </form>
+
+    </div>
+
+
+    <p id="status" class="mt-3"></p>
+    </div>
 
 
 
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>

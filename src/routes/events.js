@@ -2,7 +2,7 @@ const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
 
-router.get('/event/:eventId', async (req, res) => {
+router.get('/:eventId', async (req, res) => {
     try {
         const db = req.app.locals.db;
 

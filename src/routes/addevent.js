@@ -1,31 +1,42 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/upload');
 
 // GET /add-event
-router.get('/add-event', (req, res) => {
-    console.log('🟢 GET /add-event');
-    res.render('addevent', { title: 'Добавить событие' });
+router.get('/add-event', async (req, res) => {
+  const db = req.app.locals.db;
+  const tags = await db.collection('tags').find().sort({ name: 1 }).toArray();
+
+  res.render('addevent', {
+    title: 'Добавить событие',
+    success: req.query.success,
+    error: req.query.error,
+    tags // массив объектов { _id, name }
+  });
 });
 
 // POST /add-event
-router.post('/add-event', async (req, res) => {
-  console.log('🟢 POST /add-event', req.body);
-  try {
-    const db = req.app.locals.db;
-    const event = {
-      title: req.body.title,
-      tag: req.body.tag,
-      image: req.body.image,
-      date: req.body.date,
-      location: req.body.location
-    };
-    console.log(event);
-    await db.collection('events').insertOne(event);
-    res.json({ success: true, message: 'Событие добавлено' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Ошибка при добавлении события' });
-  }
+router.post('/add-event', upload.single('image'), async (req, res) => {
+    try {
+        const db = req.app.locals.db;
+        const { title, tag, date, location } = req.body;
+        const image = req.file ? `/images/${req.file.filename}` : null;
+
+        await db.collection('events').insertOne({
+            title,
+            tag,          
+            date,
+            location,
+            image
+        });
+
+        const tags = await db.collection('tags').find().toArray();
+        res.render('addevent', { tags, message: 'Событие добавлено ✅' });
+
+    } catch (err) {
+        console.error(err);
+        res.send('Ошибка при добавлении события ❌');
+    }
 });
 
 module.exports = router;
